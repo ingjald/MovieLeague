@@ -10,13 +10,13 @@ class Movie(models.Model):
     release_date = models.DateField()
 
     def get_value_on_date(self, date):
-        filtered = self.moviegrossupdates_set.exclude(date__gt=date)
+        filtered = self.moviegrossupdate_set.exclude(date__gt=date)
         if filtered.count() > 0:
             return filtered.latest().gross
         return 0
 
 
-class MovieGrossUpdates(models.Model):
+class MovieGrossUpdate(models.Model):
     movie = models.ForeignKey(Movie)
     date = models.DateField()
     gross = models.BigIntegerField()
@@ -60,10 +60,11 @@ class Team(models.Model):
     def get_team_value(self):
         value = 0
         for movie in self.movies.all():
-            value += movie.moviegrossupdates_set.latest().gross
+            if movie.moviegrossupdate_set.count() > 0:
+                value += movie.moviegrossupdate_set.latest().gross
         return value
 
-    def get_value_for_date(self, date):
+    def get_team_value_for_date(self, date):
         value = 0
         for movie in self.movies.all():
             value += movie.get_value_on_date(date)
