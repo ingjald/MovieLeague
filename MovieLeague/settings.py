@@ -29,7 +29,7 @@ ALLOWED_HOSTS = []
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/Los_Angeles'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -121,8 +121,24 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'social_auth',
     'league',
 )
+
+AUTHENTICATION_BACKENDS = {
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
+    'django.contrib.auth.backends.ModelBackend',
+}
+
+# Must fill in to use social media authentication
+TWITTER_CONSUMER_KEY = ''
+TWITTER_CONSUMER_SECRET = ''
+FACEBOOK_APP_ID = ''
+FACEBOOK_API_SECRET = ''
+GOOGLE_OAUTH2_CLIENT_ID = ''
+GOOGLE_OAUTH2_CLIENT_SECRET = ''
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
