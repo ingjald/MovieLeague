@@ -3,25 +3,26 @@ Unit tests for data model
 """
 
 from datetime import date
+from django.contrib.auth.models import User
 from django.test import TestCase
 
 import models
 
 
 class ModelTest(TestCase):
+
     def setUp(self):
-        self.user = models.User(name="Test User")
+        self.user = User.objects.create_user(username='test', email='test@example.com', password='password')
         self.user.save()
         self.movie = models.Movie(name="Test Movie", release_date=date(2013, 7, 1))
         self.movie.save()
-
 
     def test_user(self):
         """
         Sanity check to make sure user was created and committed to the database properly
         """
         user_from_db = models.User.objects.all()[0]
-        self.assertEqual(user_from_db.name, "Test User")
+        self.assertEqual(user_from_db.username, "test")
         self.assertEqual(self.user, user_from_db)
 
     def test_movie_no_gross(self):
