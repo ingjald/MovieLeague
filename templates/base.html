@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    {% block header %}
+        <h1>
+        {% if user.is_authenticated  %}
+            Welcome, {{ user.username }}! <a href="{% url "auth_logout" '/' %}">Logout</a>
+        {% else %}
+            Log in with: <a href="{% url "socialauth_begin" "facebook" %}"><img src="{{ STATIC_URL }}fb.png" height=24px/></a>
+        {% endif %}
+        </h1>
+    {% endblock %}
+    {% block body %}{% endblock %}
+</body>
+</html>

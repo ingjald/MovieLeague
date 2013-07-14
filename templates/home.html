@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block body %}
+<table>
+    <tr><td>League</td><td>Commissioner</td></tr>
+    {% for league in leagues %}
+        <tr><td><a href="{% url "league" league.id %}">{{ league.name }}</a></td><td>{{ league.commissioner.username }}</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

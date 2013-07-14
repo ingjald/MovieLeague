@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block body %}
+    <h2>{{ league.name }}</h2>
+    <h3>Commissioner: {{ league.commissioner.username }}</h3>
+    {% for season in league.season_set.all %}
+        <p>Season starting {{ season.start_date|date }} and ending {{ season.end_date|date }}</p>
+        {% for division in season.division_set.all %}
+            <p>{{ division.name }}</p>
+            <table>
+            <tr><td>Owner</td><td>Cost</td><td>Value</td></tr>
+            {{ division.foo_count }}
+            {% for team in division.sorted_teams %}
+                <tr><td><a href="{% url "team" team.id %}">{{ team.owner.username }}</a></td><td>&#8362;{{ team.get_team_cost }}</td><td>${{ team.get_team_value|intcomma }}</td></tr>
+            {% endfor %}
+            </table>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

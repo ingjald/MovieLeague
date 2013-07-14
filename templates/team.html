@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block body %}
+    <h2>{{ team.owner.username }}'s Team</h2>
+    <h3>Of {{ division.name }}</h3>
+    <table>
+        <tr><td>Release Date</td><td>Movie</td><td>Cost</td><td>Gross</td></tr>
+    {% for movie_membership in team.moviemembership_set.all %}
+        <tr><td> {{ movie_membership.movie.release_date|date }}</td><td>{{ movie_membership.movie.name }}</td><td>&#8362;{{ movie_membership.price }}</td><td>${{ movie_membership.movie.get_value }}</td></tr>
+    {% endfor %}
+    </table>
+{% endblock %}
