@@ -1,12 +1,17 @@
-{% extends "base.html" %}
+{% extends "league.html" %}
 {% load humanize %}
-{% block body %}
-    <h2>{{ team.owner.username }}'s Team</h2>
-    <h3>Of {{ division.name }}</h3>
-    <table>
-        <tr><td>Release Date</td><td>Movie</td><td>Cost</td><td>Gross</td></tr>
-    {% for movie_membership in team.moviemembership_set.all %}
-        <tr><td> {{ movie_membership.movie.release_date|date }}</td><td>{{ movie_membership.movie.name }}</td><td>&#8362;{{ movie_membership.price }}</td><td>${{ movie_membership.movie.get_value }}</td></tr>
-    {% endfor %}
-    </table>
+{% block content %}
+    <ul class="nav nav-tabs">
+        <li><a href="{% url "league" season.league.id %}">Home</a></li>
+        <li><a href="{% url "seasons" season.league.id %}">Seasons</a></li>
+    </ul>
+    <div class="span8">
+        <ul class="breadcrumb"><li><a href="{% url "seasons" season.league.id %}">Seasons</a><span class="divider">&gt;</span></li><li>{{ season.name }}<span class="divider">&gt;</span></li><li>{{ division.name }}<span class="divider">&gt;</span></li>{{ team.owner.username }}'s Team</ul>
+        <h2>{{ team.owner.username }}'s Team</h2>
+        <ul>
+            {% for movie_membership in team.moviemembership_set.all %}
+                <li><small class="muted">{{ movie_membership.movie.release_date|date }}</small>{{ movie_membership.movie.name }} &#8362;{{ movie_membership.price }} ${{ movie_membership.movie.get_value }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

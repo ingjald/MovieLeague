@@ -123,6 +123,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'social_auth',
+    'south',
     'league',
 )
 
@@ -147,6 +148,9 @@ LOGIN_ERROR_URL = '/login-error/'
 
 SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
+
+# Change this to enable Google Analytics
+GOOGLE_ANALYTICS_ID = 'UA-XXXXX-X'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

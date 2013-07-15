@@ -4,20 +4,20 @@ from django.contrib import admin
 
 class LeagueAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'commissioner']})
+        (None, {'fields': ['name', 'commissioner', 'short_description', 'long_description']})
     ]
 
 
 class SeasonAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['league']}),
+        (None, {'fields': ['league', 'name', 'movies']}),
         ('Dates', {'fields': ['start_date', 'end_date']})
     ]
 
 
 class DivisionAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['season', 'name']})
+        (None, {'fields': ['season', 'name', 'sort_order', 'currency_unit', 'max_currency']})
     ]
 
 

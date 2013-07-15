@@ -32,6 +32,7 @@ class ModelTest(TestCase):
         self.assertEqual(self.movie.get_value_on_date(date(2013, 6, 30)), 0)
         self.assertEqual(self.movie.get_value_on_date(date(2013, 7, 1)), 0)
         self.assertEqual(self.movie.get_value_on_date(date(2013, 7, 2)), 0)
+        self.assertEqual(self.movie.get_value(), 0)
 
     def test_movie_gross_updates(self):
         """
@@ -40,19 +41,19 @@ class ModelTest(TestCase):
         movie = models.Movie(name="Gross Updates Test Movie", release_date=date(2013, 7, 1))
         movie.save()
         self.assertEqual(self.movie.get_value_on_date(date(2013, 7, 2)), 0)
-        gross_update = models.MovieGrossUpdate(movie=movie, date=date(2013, 7, 2), gross=1000)
+        gross_update = models.MovieGrossUpdate(movie=movie, date=date(2013, 7, 2), gross=1000, source="source1")
         gross_update.save()
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 2)), 1000)
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 1)), 0)
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 3)), 1000)
-        gross_update_2 = models.MovieGrossUpdate(movie=movie, date=date(2013, 7, 5), gross=8000)
+        gross_update_2 = models.MovieGrossUpdate(movie=movie, date=date(2013, 7, 5), gross=8000, source="source1")
         gross_update_2.save()
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 2)), 1000)
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 1)), 0)
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 4)), 1000)
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 5)), 8000)
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 6)), 8000)
-        gross_update_3 = models.MovieGrossUpdate(movie=movie, date=date(2013, 7, 3), gross=4000)
+        gross_update_3 = models.MovieGrossUpdate(movie=movie, date=date(2013, 7, 3), gross=4000, source="source1")
         gross_update_3.save()
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 2)), 1000)
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 1)), 0)
@@ -60,6 +61,28 @@ class ModelTest(TestCase):
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 4)), 4000)
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 5)), 8000)
         self.assertEqual(movie.get_value_on_date(date(2013, 7, 6)), 8000)
+
+    def test_movie_gross_updates_by_source(self):
+        """
+        Tests the addition of updates to a movie's gross and ensures that they're ordered properly.
+        """
+        movie = models.Movie(name="Gross Updates Test Movie", release_date=date(2013, 7, 1))
+        movie.save()
+        self.assertEqual(self.movie.get_value_on_date(date(2013, 7, 2)), 0)
+        gross_update = models.MovieGrossUpdate(movie=movie, date=date(2013, 7, 2), gross=1000, source="source1")
+        gross_update.save()
+        self.assertEqual(movie.get_value_on_date(date(2013, 7, 2), source="source1"), 1000)
+        self.assertEqual(movie.get_value_on_date(date(2013, 7, 1), source="source1"), 0)
+        self.assertEqual(movie.get_value_on_date(date(2013, 7, 3), source="source1"), 1000)
+        self.assertEqual(movie.get_value_on_date(date(2013, 7, 3), source="source2"), 0)
+        gross_update_2 = models.MovieGrossUpdate(movie=movie, date=date(2013, 7, 5), gross=8000, source="source2")
+        gross_update_2.save()
+        self.assertEqual(movie.get_value_on_date(date(2013, 7, 4), source="source1"), 1000)
+        self.assertEqual(movie.get_value_on_date(date(2013, 7, 5), source="source1"), 1000)
+        self.assertEqual(movie.get_value_on_date(date(2013, 7, 6), source="source1"), 1000)
+        self.assertEqual(movie.get_value_on_date(date(2013, 7, 4), source="source2"), 0)
+        self.assertEqual(movie.get_value_on_date(date(2013, 7, 5), source="source2"), 8000)
+        self.assertEqual(movie.get_value_on_date(date(2013, 7, 6), source="source2"), 8000)
 
     def test_team(self):
         """

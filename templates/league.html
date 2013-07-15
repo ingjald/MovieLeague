@@ -1,19 +1,36 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% block body %}
-    <h2>{{ league.name }}</h2>
-    <h3>Commissioner: {{ league.commissioner.username }}</h3>
-    {% for season in league.season_set.all %}
-        <p>Season starting {{ season.start_date|date }} and ending {{ season.end_date|date }}</p>
-        {% for division in season.division_set.all %}
-            <p>{{ division.name }}</p>
-            <table>
-            <tr><td>Owner</td><td>Cost</td><td>Value</td></tr>
-            {{ division.foo_count }}
-            {% for team in division.sorted_teams %}
-                <tr><td><a href="{% url "team" team.id %}">{{ team.owner.username }}</a></td><td>&#8362;{{ team.get_team_cost }}</td><td>${{ team.get_team_value|intcomma }}</td></tr>
+    {% block herounit %}
+        <div class="hero-unit">
+            <h1>{{ league.name }}</h1>
+            <h3><span class="muted">{{ league.short_description }}</span></h3>
+        </div>
+    {% endblock %}
+    {% block content %}
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="{% url "league" league.id %}">Home</a></li>
+            <li><a href="{% url "seasons" league.id %}">Seasons</a></li>
+        </ul>
+        <div class="span8">
+        <ul class="breadcrumb"><li><a href="">Foo</a><span class="divider">&gt;</span></li><li>Bar</li></ul>
+        <h2>Current Season</h2>
+            <h3 class="muted">{{ league.season_set.latest.name }} ({{ league.season_set.latest.start_date|date }} to {{ league.season_set.latest.end_date|date }})</h3>
+            {% for division in league.season_set.latest.division_set.all %}
+                <h4>{{ division.name }}</h4>
+                <ol>
+                {% for team in division.sorted_teams %}
+                    <li class="promoted"><h4><a href="{% url "team" team.id %}">{{ team.owner.username }}</a><span class="pull-right"><small class="muted">&#8362;{{ team.get_team_cost|intcomma }} for </small>${{ team.get_team_value|intcomma }}</span></h4></li>
+                {% endfor %}
+                </ol>
             {% endfor %}
-            </table>
-        {% endfor %}
-    {% endfor %}
+        </div>
+    {% endblock %}
+    {% block sidebar %}
+        <div class="span4">
+            <h3>League Info</h3>
+            <small class="muted">Commissioner: </small><p>{{ league.commissioner.username }}</p>
+            <small class="muted">Description:</small><p>{{ league.long_description }}</p>
+        </div>
+    {% endblock %}
 {% endblock %}

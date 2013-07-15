@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% block body %}
-<table>
-    <tr><td>League</td><td>Commissioner</td></tr>
+    <div class="span4">
+    <h2>Leagues</h2>
+    <ul>
     {% for league in leagues %}
-        <tr><td><a href="{% url "league" league.id %}">{{ league.name }}</a></td><td>{{ league.commissioner.username }}</td></tr>
+        <li><a href="{% url "league" league.id %}">{{ league.name }}</a> <span class="muted pull-right">Commissioner: {{ league.commissioner.username }}</span></li>
     {% endfor %}
-</table>
+    </ul>
+    </div>
+    <div class="span4 offset4">This is the right side</div>
 {% endblock %}

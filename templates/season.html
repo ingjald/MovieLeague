@@ -1,0 +1,39 @@
+{% extends "league.html" %}
+{% load humanize %}
+{% block content %}
+    <ul class="nav nav-tabs">
+        <li><a href="{% url "league" season.league.id %}">Home</a></li>
+        <li><a href="{% url "seasons" season.league.id %}">Seasons</a></li>
+    </ul>
+    <div class="span8">
+        <ul class="breadcrumb"><li><a href="{% url "seasons" season.league.id %}">Seasons</a><span class="divider">&gt;</span></li><li>{{ season.name }}</li></ul>
+        <h2 class="muted">{{ season.name }}</h2>
+        {% for division in season.division_set.all %}
+            <h4>{{ division.name }}</h4>
+            <ol>
+            {% for team in division.sorted_teams %}
+                <li class="promoted"><h4><a href="{% url "team" team.id %}">{{ team.owner.username }}</a><span class="pull-right"><small class="muted">{{ division.currency_unit|safe }}{{ team.get_team_cost|intcomma }} for </small>${{ team.get_team_value|intcomma }}</span></h4></li>
+            {% endfor %}
+            </ol>
+        {% endfor %}
+    </div>
+{% endblock %}
+{% block sidebar %}
+    <div class="span4">
+        <h3>Season Info</h3>
+        <small class="muted">Start Date: </small><p>{{ season.start_date|date }}</p>
+        <small class="muted">End Date:</small><p>{{ season.end_date|date }}</p>
+        <h3>Movies</h3>
+        <ul>
+            {% for movie in season.released_movies %}
+                <li>{{ movie.name }} <small class="muted">({{ movie.release_date|date }})</small> <small class="muted pull-right">${{ movie.get_value }}</small></li>
+            {% endfor %}
+        </ul>
+        <div class="upcomingSeparator"><div></div><span>Upcoming</span></div>
+        <ul>
+            {% for movie in season.unreleased_movies %}
+                <li>{{ movie.name }} <small class="muted">({{ movie.release_date|date }})</small> <small class="muted pull-right">${{ movie.get_value }}</small></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
