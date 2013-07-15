@@ -1,0 +1,10 @@
+{% load humanize %}
+{% load league_filters %}
+{% for division in season.division_set.all %}
+    <h4><a href="{% url "division" division.id %}">{{ division.name }}</a></h4>
+    <ol>
+    {% for team in division.sorted_teams %}
+        <li {{ team|relegation|safe }}><h4><a href="{% url "team" team.id %}">{{ team.get_name }}</a><span class="pull-right"><small class="muted">{{ division.currency_unit|safe }}{{ team.get_team_cost|intcomma }} for </small>${{ team.get_team_value|intcomma }}</span></h4></li>
+    {% endfor %}
+    </ol>
+{% endfor %}

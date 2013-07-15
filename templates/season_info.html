@@ -1,0 +1,16 @@
+{% load humanize %}
+<h3>Season Info</h3>
+<small class="muted">Start Date: </small><p>{{ season.start_date|date }}</p>
+<small class="muted">End Date:</small><p>{{ season.end_date|date }}</p>
+<h3>Movies</h3>
+<ul>
+    {% for movie, value in season.released_movies %}
+        <li>{{ movie.name }} <small class="muted">({{ movie.release_date|date }})</small> <small class="pull-right">${{ value|intcomma }}</small></li>
+    {% endfor %}
+</ul>
+<div class="upcomingSeparator"><div></div><span>Upcoming</span></div>
+<ul>
+    {% for movie, value in season.unreleased_movies %}
+        <li>{{ movie.name }} <small class="muted">({{ movie.release_date|date }})</small> <small class="pull-right">${{ value|intcomma }}</small></li>
+    {% endfor %}
+</ul>

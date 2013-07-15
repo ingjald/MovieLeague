@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render
-from league.models import League, Team, Season
+from league.models import League, Team, Season, Division
 
 
 def home(request):
@@ -9,7 +9,8 @@ def home(request):
 
 def league(request, league_id):
     requested_league = League.objects.get(id=league_id)
-    return render(request, 'league.html', {'league': requested_league})
+    latest_season = requested_league.season_set.latest()
+    return render(request, 'league.html', {'league': requested_league, 'season': latest_season})
 
 
 def team(request, team_id):
@@ -27,3 +28,9 @@ def seasons(request, league_id):
 def season(request, season_id):
     requested_season = Season.objects.get(id=season_id)
     return render(request, 'season.html', {'season': requested_season, 'league': requested_season.league})
+
+
+def division(request, division_id):
+    requested_division = Division.objects.get(id=division_id)
+    return render(request, 'division.html', {'division': requested_division, 'season': requested_division.season,
+                                             'league': requested_division.season.league})

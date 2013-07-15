@@ -7,7 +7,7 @@
     </ul>
     <div class="span8">
         <ul class="breadcrumb"><li><a href="{% url "seasons" season.league.id %}">Seasons</a><span class="divider">&gt;</span></li><li>{{ season.name }}<span class="divider">&gt;</span></li><li>{{ division.name }}<span class="divider">&gt;</span></li>{{ team.owner.username }}'s Team</ul>
-        <h2>{{ team.owner.username }}'s Team</h2>
+        <h2>{{ team.get_name }}</h2>
         <ul>
             {% for movie_membership in team.moviemembership_set.all %}
                 <li><small class="muted">{{ movie_membership.movie.release_date|date }}</small>{{ movie_membership.movie.name }} &#8362;{{ movie_membership.price }} ${{ movie_membership.movie.get_value }}</li>

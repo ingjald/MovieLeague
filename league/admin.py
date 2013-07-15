@@ -1,4 +1,4 @@
-from league.models import League, Season, Division, Team, Movie
+from league.models import League, Season, Division, Team, Movie, MovieGrossUpdate
 from django.contrib import admin
 
 
@@ -17,7 +17,8 @@ class SeasonAdmin(admin.ModelAdmin):
 
 class DivisionAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['season', 'name', 'sort_order', 'currency_unit', 'max_currency']})
+        (None,
+         {'fields': ['season', 'name', 'sort_order', 'currency_unit', 'max_currency', 'num_promoted', 'num_relegated']})
     ]
 
 
@@ -33,7 +34,7 @@ class MovieMembershipInline(admin.TabularInline):
 
 class TeamAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['division', 'owner']})
+        (None, {'fields': ['division', 'owner', 'name']})
     ]
     inlines = [MovieMembershipInline]
 
@@ -43,9 +44,15 @@ class MovieAdmin(admin.ModelAdmin):
         (None, {'fields': ['name', 'release_date']})
     ]
 
+class MovieGrossUpdateAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['movie', 'date', 'gross', 'source']})
+    ]
+
 
 admin.site.register(League, LeagueAdmin)
 admin.site.register(Season, SeasonAdmin)
 admin.site.register(Division, DivisionAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Movie, MovieAdmin)
+admin.site.register(MovieGrossUpdate, MovieGrossUpdateAdmin)

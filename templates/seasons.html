@@ -1,5 +1,6 @@
 {% extends "league.html" %}
 {% load humanize %}
+{% load league_filters %}
 {% block content %}
     <ul class="nav nav-tabs">
         <li><a href="{% url "league" league.id %}">Home</a></li>
@@ -11,7 +12,7 @@
         <h4><a href="{% url "season" season.id %}">{{ season.name }}</a> ({{ season.start_date|date }} to {{ season.end_date|date }})</h4>
             <ul>
                 {% for division in season.division_set.all %}
-                    <li>{{ division.name }} <div class="muted">{% if season.has_ended %}Winner{% else %}Leader{% endif %}: {{ division.get_leader.owner.username }}</div><div class="muted">${{ division.get_leader.get_team_value|intcomma }}</div>
+                    <li><a href="{% url "division" division.id %}">{{ division.name }}</a> <div class="muted">{% if season.has_ended %}Winner{% else %}Leader{% endif %}: {{ division.get_leader.get_name }} <span class="pull-right">{{ division.get_leader|team_cost|safe }} for ${{ division.get_leader.get_team_value|intcomma }}</span></div>
                     </li>
                 {% endfor %}
             </ul>

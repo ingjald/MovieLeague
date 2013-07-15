@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load league_filters %}
 {% block body %}
     {% block herounit %}
         <div class="hero-unit">
@@ -13,17 +14,9 @@
             <li><a href="{% url "seasons" league.id %}">Seasons</a></li>
         </ul>
         <div class="span8">
-        <ul class="breadcrumb"><li><a href="">Foo</a><span class="divider">&gt;</span></li><li>Bar</li></ul>
         <h2>Current Season</h2>
             <h3 class="muted">{{ league.season_set.latest.name }} ({{ league.season_set.latest.start_date|date }} to {{ league.season_set.latest.end_date|date }})</h3>
-            {% for division in league.season_set.latest.division_set.all %}
-                <h4>{{ division.name }}</h4>
-                <ol>
-                {% for team in division.sorted_teams %}
-                    <li class="promoted"><h4><a href="{% url "team" team.id %}">{{ team.owner.username }}</a><span class="pull-right"><small class="muted">&#8362;{{ team.get_team_cost|intcomma }} for </small>${{ team.get_team_value|intcomma }}</span></h4></li>
-                {% endfor %}
-                </ol>
-            {% endfor %}
+            {% include "season_standings.html" %}
         </div>
     {% endblock %}
     {% block sidebar %}

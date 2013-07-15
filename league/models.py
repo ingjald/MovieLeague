@@ -54,6 +54,13 @@ class MovieMembership(models.Model):
     team = models.ForeignKey('Team')
     price = models.IntegerField()
 
+    def value_on_team(self):
+        end_date = self.team.division.season.end_date
+        return self.movie.get_value_on_date(end_date)
+
+    def efficiency(self):
+        return self.value_on_team()/self.price
+
     class Meta:
         ordering = ['movie']
 
@@ -79,11 +86,17 @@ class Season(models.Model):
     def has_ended(self):
         return datetime.date.today > self.end_date
 
+    def _annotate_values(self, movie_list):
+        annotated_movies = []
+        for movie in movie_list:
+            annotated_movies.append((movie, movie.get_value_on_date(self.end_date)))
+        return annotated_movies
+
     def released_movies(self):
-        return self.movies.exclude(release_date__gt=datetime.date.today())
+        return self._annotate_values(self.movies.exclude(release_date__gt=datetime.date.today()))
 
     def unreleased_movies(self):
-        return self.movies.filter(release_date__gt=datetime.date.today())
+        return self._annotate_values(self.movies.filter(release_date__gt=datetime.date.today()))
 
     def __unicode__(self):
         return self.name + ", " + str(self.start_date) + " to " + str(self.end_date)
@@ -98,6 +111,8 @@ class Division(models.Model):
     sort_order = models.PositiveSmallIntegerField()
     currency_unit = models.TextField(max_length=10)
     max_currency = models.IntegerField()
+    num_relegated = models.SmallIntegerField()
+    num_promoted = models.SmallIntegerField()
 
     def sorted_teams(self):
         return sorted(sorted(list(Team.objects.filter(division=self)), key=lambda x: x.get_team_cost()),
@@ -110,6 +125,12 @@ class Division(models.Model):
         else:
             return None
 
+    def is_relegation_enabled(self):
+        return self.num_relegated > 0
+
+    def is_promotion_enabled(self):
+        return self.num_promoted > 0
+
     def __unicode__(self):
         return self.name
 
@@ -121,6 +142,7 @@ class Team(models.Model):
     owner = models.ForeignKey(User)
     movies = models.ManyToManyField(Movie, through=MovieMembership)
     division = models.ForeignKey(Division)
+    name = models.TextField(max_length=50, blank=True, null=True)
 
     def get_team_cost(self):
         cost = 0
@@ -132,7 +154,7 @@ class Team(models.Model):
         value = 0
         for movie in self.movies.all():
             if movie.moviegrossupdate_set.count() > 0:
-                value += movie.get_value()
+                value += movie.get_value_on_date(self.division.season.end_date)
         return value
 
     def get_team_value_for_date(self, date):
@@ -141,5 +163,24 @@ class Team(models.Model):
             value += movie.get_value_on_date(date)
         return value
 
+    def get_name(self):
+        if self.name and len(self.name) > 0:
+            return self.name
+        else:
+            return self.owner.username
+
+    def get_position(self, reverse=False):
+        sorted_division = self.division.sorted_teams()
+        if reverse:
+            sorted_division.reverse()
+        position = sorted_division.index(self)
+        return position
+
+    def is_promoted(self):
+        return self.get_position() < self.division.num_promoted
+
+    def is_relegated(self):
+        return self.get_position(reverse=True) < self.division.num_relegated
+
     def __unicode__(self):
-        return self.owner.username
+        return self.get_name()

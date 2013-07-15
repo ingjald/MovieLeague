@@ -1,0 +1,36 @@
+{% extends "league.html" %}
+{% load humanize %}
+{% load league_filters %}
+{% block content %}
+    <ul class="nav nav-tabs">
+        <li><a href="{% url "league" season.league.id %}">Home</a></li>
+        <li><a href="{% url "seasons" season.league.id %}">Seasons</a></li>
+    </ul>
+    <div class="span8">
+        <ul class="breadcrumb"><li><a href="{% url "seasons" season.league.id %}">Seasons</a><span class="divider">&gt;</span></li><li><a href="{% url "season" season.id %}">{{ season.name }}</a><span class="divider">&gt;</span></li><li>{{ division.name }}</li></ul>
+        <h2>{{ division.name }}</h2>
+        <ol>
+        {% for team in division.sorted_teams %}
+            <li><h3 {{ team|relegation|safe }}><a href="{% url "team" team.id %}">{{ team.get_name }}</a><span class="team-earnings pull-right"><small>{{ team|team_cost|safe }} for </small>${{ team.get_team_value|intcomma }}</span></h3>
+                <h4>Movies</h4>
+                <ul>
+                    {% for movie_membership in team.moviemembership_set.all %}
+                        <li><span class="movie-list">{{ movie_membership.movie.name }} <small class="muted">(Release Date: {{ movie_membership.movie.release_date|date }})</small><span class="pull-right muted"><small>{{ movie_membership|movie_membership_cost|safe }} for </small>${{ movie_membership.value_on_team|intcomma }}</span>
+                            <p class="details">Efficiency: ${{ movie_membership.efficiency|intcomma }} per {{ team.division.currency_unit|safe }}</p>
+                        </span></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+        </ol>
+    </div>
+{% endblock %}
+{% block sidebar %}
+    <div class="span4">
+        <h3>Division Settings</h3>
+        <small class="muted">Currency: </small><p>{{ division.currency_unit|safe }}{{ division.max_currency }}</p>
+        <small class="muted">Promotion: </small><p>{% if division.is_promotion_enabled %}Top {{ division.num_promoted }} team{{ division.num_promoted|pluralize }}{% else %}Disabled{% endif %}</p>
+        <small class="muted">Relegation: </small><p>{% if division.is_relegation_enabled %}Bottom {{ division.num_relegated }} team{{ division.num_relegated|pluralize }}{% else %}Disabled{% endif %}</p>
+        {% include "season_info.html" %}
+    </div>
+{% endblock %}

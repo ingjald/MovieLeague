@@ -20,6 +20,7 @@ urlpatterns = patterns('',
 
     (r'^$', 'league.views.home'),
     url(r'^league/(?P<league_id>\d*)/seasons', 'league.views.seasons', name="seasons"),
+    url(r'^division/(?P<division_id>\d*)', 'league.views.division', name="division"),
     url(r'^season/(?P<season_id>\d*)', 'league.views.season', name="season"),
     url(r'^league/(?P<league_id>\d*)', 'league.views.league', name="league"),
     url(r'^team/(?P<team_id>\d*)', 'league.views.team', name="team"),
